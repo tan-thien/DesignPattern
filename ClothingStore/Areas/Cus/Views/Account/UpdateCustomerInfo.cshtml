@@ -1,0 +1,18 @@
+﻿@model ClothingStore.Models.Customer
+
+<h2>Cập nhật thông tin khách hàng</h2>
+
+<form asp-action="UpdateCustomerInfo" method="post">
+    <input type="hidden" asp-for="IdUser" />
+
+    <label>Tên khách hàng</label>
+    <input asp-for="CusName" required />
+
+    <label>Số điện thoại</label>
+    <input asp-for="Phone" required />
+
+    <label>Địa chỉ</label>
+    <input asp-for="Address" required />
+
+    <button type="submit">Lưu</button>
+</form>

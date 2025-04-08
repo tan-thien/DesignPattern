@@ -1,0 +1,180 @@
+﻿@model Dictionary<string, (int Count, decimal TotalAmount)>
+
+@{
+    ViewData["Title"] = "Báo cáo đơn hàng";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form method="get" action="@Url.Action("GetStatistics", "Order", new { area = "Admin" })">
+    <label for="period">Chọn loại thống kê:</label>
+<select name="period" id="period" onchange="updateDateInputs()">
+@*     <option value="day">Theo ngày</option> *@
+    <option value="month">Theo tháng</option>
+@*     <option value="year">Theo năm</option> *@
+</select>
+
+<!-- Theo ngày -->
+<div id="date-range">
+    <label for="startDate">Từ ngày:</label>
+    <input type="date" id="startDate" name="startDate">
+    
+    <label for="endDate">Đến ngày:</label>
+    <input type="date" id="endDate" name="endDate">
+        
+</div>
+
+    <!-- Theo tháng -->
+    <div id="month-range" style="display: none;">
+        <form method="get" action="@Url.Action("GetStatistics")">
+            <label for="month">Chọn tháng:</label>
+            <select id="month" name="month">
+                @for (int i = 1; i <= 12; i++)
+                {
+                    <option value="@i" selected="@((i == DateTime.Now.Month) ? "selected" : "")">@i</option>
+                }
+            </select>
+
+            <label for="year">Chọn năm:</label>
+            <select id="year" name="year">
+                @for (int i = DateTime.Now.Year - 5; i <= DateTime.Now.Year + 5; i++)
+                {
+                    <option value="@i" selected="@(i == DateTime.Now.Year ? "selected" : "")">@i</option>
+                }
+            </select>
+
+            <button type="submit">Lọc</button>
+        </form>
+    </div>
+
+
+<!-- Theo năm -->
+<div id="year-range" style="display: none;">
+    <label for="year">Chọn năm:</label>
+    <input type="number" id="year" name="year" min="2000" max="2100">
+</div>
+
+
+    <button type="submit">Xem báo cáo</button>
+</form>
+<div id="reportContent">
+@if (Model != null && Model.Any())
+{
+    <div id="report-content">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Khoảng thời gian</th>
+                    <th>Số lượng đơn hàng</th>
+                    <th>Tổng tiền (VNĐ)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Key</td>
+                        <td>@item.Value.Count</td>
+                        <td>@item.Value.TotalAmount.ToString("N0") VNĐ</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <canvas id="orderChart"></canvas>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function updateDateInputs() {
+            let period = document.getElementById("period").value;
+            document.getElementById("date-range").style.display = (period === "day") ? "block" : "none";
+        }
+
+        var labels = @(Html.Raw(Json.Serialize(Model.Keys.ToList()?.ToArray() ?? new string[] { })));
+        var orderCounts = @(Html.Raw(Json.Serialize(Model.Values.Select(v => v.Count).ToArray() ?? new int[] { })));
+        var totalAmounts = @(Html.Raw(Json.Serialize(Model.Values.Select(v => v.TotalAmount).ToArray() ?? new decimal[] { })));
+
+
+        console.log("Labels:", labels);
+        console.log("Order Counts:", orderCounts);
+        console.log("Total Amounts:", totalAmounts);
+
+        var ctx = document.getElementById('orderChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Số lượng đơn hàng',
+                        data: orderCounts,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Tổng tiền (VNĐ)',
+                        data: totalAmounts,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+    <div class="d-flex justify-content-between mb-3">
+        <button onclick="printReport()" class="btn btn-primary">
+            🖨 In báo cáo
+        </button>
+        <a href="@Url.Action("ExportStatisticsToJson", "Order", new { area = "Admin", period = "day" })" class="btn btn-success">
+            📂 Xuất JSON
+        </a>
+        <a href="@Url.Action("ExportStatisticsToPdf", "Order", new { area = "Admin", period = ViewContext.HttpContext.Request.Query["period"] })" class="btn btn-danger">
+            📄 Xuất PDF
+        </a>
+    </div>
+
+
+        <script>
+            function printReport() {
+                var printContent = document.getElementById("reportContent").innerHTML;
+                var originalContent = document.body.innerHTML;
+
+                document.body.innerHTML = printContent;
+                window.print();
+                document.body.innerHTML = originalContent;
+                location.reload(); // Để đảm bảo giao diện không bị lỗi sau khi in
+            }
+        </script>
+}
+else
+{
+    <p>Không có dữ liệu trong khoảng thời gian này.</p>
+}
+</div>
+
+<script>
+    function updateDateInputs() {
+        let period = document.getElementById("period").value;
+
+        // Ẩn hoặc hiển thị các phần tử theo giá trị của 'period'
+        document.getElementById("date-range").style.display = (period === "day") ? "block" : "none";
+        document.getElementById("month-range").style.display = (period === "month") ? "block" : "none";
+        document.getElementById("year-range").style.display = (period === "year") ? "block" : "none";
+    }
+
+    // Gọi khi trang load để hiển thị các phần tử đúng
+    document.addEventListener("DOMContentLoaded", updateDateInputs);
+</script>
+

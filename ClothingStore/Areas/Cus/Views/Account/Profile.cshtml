@@ -1,0 +1,41 @@
+﻿@model ClothingStore.Models.User
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <h2 class="text-center text-primary mb-4">Thông Tin Tài Khoản</h2>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h4 class="text-secondary">Tài khoản</h4>
+                <ul class="list-group mb-4">
+                    <li class="list-group-item"><strong>Tên tài khoản:</strong> @Model.UserName</li>
+                    <li class="list-group-item">
+                        <strong>Trạng thái:</strong>
+                        <span class="badge @(Model.Status == "Active" ? "bg-success" : "bg-danger")">
+                            @Model.Status
+                        </span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-md-6">
+                <h4 class="text-secondary">Thông tin khách hàng</h4>
+                @if (Model.Customer != null)
+                {
+                    <ul class="list-group">
+                        <li class="list-group-item"><strong>Tên khách hàng:</strong> @Model.Customer.CusName</li>
+                        <li class="list-group-item"><strong>Số điện thoại:</strong> @Model.Customer.Phone</li>
+                        <li class="list-group-item"><strong>Địa chỉ:</strong> @Model.Customer.Address</li>
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-muted">Bạn chưa cập nhật thông tin cá nhân.</p>
+                    <a href="@Url.Action("UpdateCustomerInfo", "User")" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Cập nhật ngay
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

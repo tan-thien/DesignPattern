@@ -1,0 +1,85 @@
+﻿@model ClothingStore.ViewModel.ConfirmOrderViewModel
+
+@{
+    ViewData["Title"] = "Xác nhận đơn hàng";
+    var totalPrice = Model.OrderDetails.Sum(item => item.Price * item.SoLuong);
+    var discountedPrice = totalPrice;  // Mặc định giá chưa giảm
+}
+
+<div class="container mt-4">
+    <h2 class="text-center">🛒 Xác nhận đơn hàng</h2>
+
+    <table class="table table-bordered text-center">
+        <thead class="table-dark">
+            <tr>
+                <th>Tên sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Giá</th>
+                <th>Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.OrderDetails)
+            {
+                <tr>
+                    <td>@item.IdProduct</td>
+                    <td>@item.SoLuong</td>
+                    <td>@item.Price.ToString("N0") VND</td>
+                    <td>@((item.Price * item.SoLuong).ToString("N0")) VND</td>
+                </tr>
+            }
+            <!-- Hiển thị tổng tiền -->
+            <tr class="table-warning fw-bold">
+                <td colspan="3" class="text-end">Tổng tiền:</td>
+                <td id="totalPrice">@totalPrice.ToString("N0") VND</td>
+            </tr>
+
+        </tbody>
+    </table>
+
+    <form asp-action="PlaceOrder" method="post" class="p-4 border rounded shadow-sm">
+        <div class="mb-3">
+            <label for="DiaChi" class="form-label">🏠 Địa chỉ giao hàng:</label>
+            <input type="text" class="form-control" id="DiaChi" name="DiaChi" value="@Model.DiaChi" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="MoTa" class="form-label">📝 Ghi chú đơn hàng:</label>
+            <textarea class="form-control" id="MoTa" name="MoTa" rows="3">@Model.MoTa</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="VoucherCode" class="form-label">🎟️ Nhập mã voucher:</label>
+            <input type="text" class="form-control" id="VoucherCode" name="VoucherCode" />
+            <button type="button" class="btn btn-primary mt-2" onclick="applyVoucher()">Áp dụng</button>
+        </div>
+
+        <div class="mb-3">
+            <label for="PaymentMethod" class="form-label">💳 Chọn phương thức thanh toán:</label>
+            <select class="form-control" id="PaymentMethod" name="PaymentMethod" required>
+                <option value="">-- Chọn phương thức --</option>
+                <option value="1">💵 Thanh toán khi nhận hàng</option>
+                <option value="2">📱 Ví điện tử</option>
+            </select>
+        </div>
+
+        <input type="hidden" name="TongTien" id="finalTotalPrice" value="@totalPrice" />
+
+        <button type="submit" class="btn btn-success w-100">✅ Xác nhận đặt hàng</button>
+    </form>
+</div>
+
+<script>
+    function applyVoucher() {
+        let voucherCode = document.getElementById("VoucherCode").value.trim();
+        if (!voucherCode) {
+            alert("Vui lòng nhập mã voucher!");
+            return;
+        }
+
+        // Gửi mã voucher qua Controller (đã xử lý trong PlaceOrder)
+        alert(`Đã nhập mã voucher: ${voucherCode}. Vui lòng xác nhận để tính giá.`);
+
+    }
+
+</script>

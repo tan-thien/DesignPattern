@@ -1,0 +1,151 @@
+﻿@model ClothingStore.Models.Product
+
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+}
+
+<div class="product-container">
+    <div class="product-image">
+        <img src="@Model.Image" alt="@Model.ProductName" />
+    </div>
+    <div class="product-info">
+        <h2>@Model.ProductName</h2>
+        <p class="product-price">@Model.Price.ToString("N0") VNĐ</p>
+        <p><strong>Mô tả:</strong> @Model.Description</p>
+        <p><strong>Số lượng:</strong> @Model.Quantity</p>
+        <p><strong>Kích cỡ:</strong> @Model.Size</p>
+        <p><strong>Danh mục:</strong> @(Model.Category?.CateName ?? "Không có")</p>
+
+        <form method="post" asp-action="AddToCart" asp-controller="Cart" asp-area="Cus">
+            <input type="hidden" name="productId" value="@Model.IdProduct" />
+            <input type="hidden" name="productName" value="@Model.ProductName" />
+            <input type="hidden" name="imageUrl" value="@Model.Image" />
+            <input type="hidden" name="price" value="@Model.Price" />
+            <input type="hidden" name="stock" value="@Model.Quantity" />
+            <button type="submit" class="btn-add-cart">🛒 Thêm vào giỏ hàng</button>
+        </form>
+
+
+    </div>
+</div>
+
+<div class="panel-group">
+    <div class="panel-title"><h2>Thông tin sản phẩm</h2></div>
+    <div class="panel-description">
+        <ul class="description-list">
+            <li><strong>Chất liệu:</strong> Vải chân cua</li>
+            <li><strong>Họa tiết:</strong> In lụa trực tiếp lên vải</li>
+            <li><strong>Size:</strong> S/M/L</li>
+            <li><strong>Thương hiệu:</strong> Degrey</li>
+            <li><strong>Sản xuất:</strong> Việt Nam</li>
+            <li><strong>Màu sắc & họa tiết:</strong> Thiết kế riêng bởi Degrey</li>
+        </ul>
+
+        <div class="panel-title">
+            <h2>Hướng dẫn bảo quản</h2></div>
+        <ul class="care-instructions">
+            <li>Giặt ở nhiệt độ bình thường với đồ cùng màu.</li>
+            <li>Không dùng hóa chất tẩy.</li>
+            <li>Nên giặt tay và lộn ngược áo trước khi giặt.</li>
+            <li>Không ủi trực tiếp lên hình in.</li>
+            <li>Hạn chế máy sấy, ủi bằng bàn ủi hơi nước.</li>
+        </ul>
+
+        <h3>Chính sách đổi sản phẩm</h3>
+        <ul class="exchange-policy">
+            <li>Đổi size hoặc sản phẩm trong vòng 30 ngày.</li>
+            <li>Không áp dụng với hàng giảm giá hoặc phụ kiện cá nhân.</li>
+            <li>Giữ hóa đơn để được đổi hàng.</li>
+        </ul>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f9f9f9;
+        font-family: Arial, sans-serif;
+    }
+
+    .product-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 40px;
+        max-width: 900px;
+        margin: 50px auto;
+        padding: 30px;
+        border-radius: 10px;
+        background-color: #fff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-image img {
+        width: 320px;
+        height: 320px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+    }
+
+    .product-info {
+        flex: 1;
+    }
+
+    .product-price {
+        font-size: 24px;
+        font-weight: bold;
+        color: #d10024;
+    }
+
+    .btn-add-cart {
+        display: block;
+        width: 100%;
+        background: linear-gradient(to right, #ff416c, #ff4b2b);
+        color: white;
+        font-size: 18px;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.1s ease;
+    }
+
+        .btn-add-cart:hover {
+            background: linear-gradient(to right, #ff4b2b, #ff416c);
+            transform: scale(1.05);
+        }
+
+    .panel-group {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 20px;
+        border-radius: 10px;
+        background-color: #fff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .panel-title h2 {
+        margin: 0;
+        padding: 10px;
+        font-size: 20px;
+        background-color: #000000;
+        color: white;
+        text-align: center;
+        border-radius: 8px;
+    }
+
+    .panel-description {
+        padding: 15px;
+    }
+
+    .description-list, .care-instructions, .exchange-policy {
+        list-style: none;
+        padding-left: 0;
+    }
+
+        .description-list li, .care-instructions li, .exchange-policy li {
+            padding: 5px 0;
+            font-size: 16px;
+            border-bottom: 1px solid #ddd;
+        }
+</style>

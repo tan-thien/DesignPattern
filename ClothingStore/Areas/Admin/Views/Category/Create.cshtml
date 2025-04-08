@@ -1,0 +1,21 @@
+﻿@model ClothingStore.Models.Category
+
+@{
+    ViewData["Title"] = "Create Category";
+}
+
+<h2>Create Category</h2>
+
+<form asp-action="Create" method="post">
+    <div>
+        <label for="CateName">Category Name</label>
+        <input type="text" id="CateName" name="CateName" class="form-control" />
+    </div>
+    <button type="submit">Save</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

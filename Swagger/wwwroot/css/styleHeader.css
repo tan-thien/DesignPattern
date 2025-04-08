@@ -1,0 +1,122 @@
+﻿body {
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    background: white;
+    padding: 10px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+    align-items: center;
+
+}
+
+.logo img {
+    height: 40px;
+}
+
+.nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+    .nav-list li {
+        margin-right: 20px;
+    }
+
+        .nav-list li a {
+            text-decoration: none;
+            color: black;
+            font-weight: 500;
+        }
+
+.search-box {
+    position: relative;
+    margin-right: 20px;
+}
+
+    .search-box input {
+        padding: 5px 30px 5px 10px;
+        border-radius: 20px;
+        border: 1px solid #ccc;
+    }
+
+    .search-box i {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: gray;
+    }
+
+.cart {
+    position: relative;
+    margin-right: 20px;
+    cursor: pointer;
+}
+
+    .cart i {
+        font-size: 20px;
+    }
+
+.cart-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: red;
+    color: white;
+    font-size: 12px;
+    padding: 2px 5px;
+    border-radius: 50%;
+}
+
+.cart-text {
+    margin-left: 5px;
+}
+
+.language {
+    position: relative;
+}
+
+    .language button {
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    .language img {
+        width: 30px;
+        height: 20px;
+    }
+
+    .language .dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 40px;
+        right: 0;
+        background: white;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+        padding: 5px 0;
+    }
+
+        .language .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            padding: 5px 15px;
+            text-decoration: none;
+            color: black;
+        }
+
+            .language .dropdown-menu a img {
+                width: 20px;
+                height: 15px;
+                margin-right: 10px;
+            }
+
+            .language .dropdown-menu a:hover {
+                background: #f1f1f1;
+            }

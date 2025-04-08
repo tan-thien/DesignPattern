@@ -1,0 +1,51 @@
+﻿@model ClothingStore.Models.Order
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+}
+
+<h2 class="text-center">Chi Tiết Đơn Hàng</h2>
+
+<div class="card">
+    <div class="card-body">
+        <h5><strong>Đơn Hàng #@Model.IdOrder</strong></h5>
+        <p><strong>Ngày Đặt:</strong> @Model.NgayDat.ToString("dd/MM/yyyy HH:mm")</p>
+        <p><strong>Địa Chỉ:</strong> @Model.DiaChi</p>
+        <p><strong>Phương Thức Thanh Toán:</strong> @Model.PaymentMethodName</p>
+        <p><strong>Tổng Tiền:</strong> @Model.TongTien.ToString("N0") đ</p>
+        <p>
+            <strong>Trạng Thái:</strong>
+            <span class="badge @(Model.StatusOrder == "Chờ xác nhận" ? "bg-warning" : "bg-success")">
+                @Model.StatusOrder
+            </span>
+        </p>
+    </div>
+</div>
+
+<h3 class="mt-4">Danh Sách Sản Phẩm</h3>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Sản Phẩm</th>
+            <th>Giá</th>
+            <th>Số Lượng</th>
+            <th>Tổng</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderDetails)
+        {
+            <tr>
+                <td>@item.Product.IdProduct</td>
+                <td>@item.Product.ProductName</td>
+                <td>@item.Product.Price.ToString("N0") đ</td>
+                <td>@item.SoLuong</td>
+                <td>@(item.Product.Price * item.SoLuong) đ</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="History" class="btn btn-primary">Quay lại</a>

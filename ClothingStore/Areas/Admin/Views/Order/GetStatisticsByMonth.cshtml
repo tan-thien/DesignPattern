@@ -1,0 +1,63 @@
+﻿@model Dictionary<string, (int Count, decimal TotalAmount)>
+@{
+    ViewData["Title"] = "Thống kê theo tháng";
+}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<h2>Thống kê theo tháng</h2>
+
+<form method="post" asp-action="GetStatisticsByMonth">
+    <label>Tháng:</label>
+    <input type="number" name="month" min="1" max="12" required />
+    <label>Năm:</label>
+    <input type="number" name="year" min="2000" max="2100" required />
+    <button type="submit">Thống kê</button>
+</form>
+
+@if (Model != null && Model.Any())
+{
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>Ngày</th>
+            <th>Số đơn hàng</th>
+            <th>Tổng tiền</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Key</td>
+                <td>@item.Value.Count</td>
+                <td>@item.Value.TotalAmount.ToString("N0") ₫</td>
+            </tr>
+        }
+    </table>
+    <canvas id="monthChart"></canvas>
+}
+else
+{
+    <p>Không có dữ liệu để hiển thị.</p>
+}
+<script>
+    var labels = @Html.Raw(Json.Serialize(Model.Keys));
+    var data = @Html.Raw(Json.Serialize(Model.Values.Select(v => v.TotalAmount)));
+
+    var ctx = document.getElementById('monthChart').getContext('2d');
+    var monthChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Tổng tiền (₫)',
+                data: data,
+                backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                borderColor: 'rgba(255, 159, 64, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+</script>

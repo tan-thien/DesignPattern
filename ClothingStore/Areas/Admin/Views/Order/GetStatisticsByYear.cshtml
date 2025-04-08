@@ -1,0 +1,148 @@
+﻿@model Dictionary<string, (int Count, decimal TotalAmount)>
+
+@{
+    ViewData["Title"] = "Thống kê theo năm";
+}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<h2>Thống kê theo năm</h2>
+
+<!-- Form chọn năm -->
+<form method="post" asp-action="GetStatisticsByYear">
+    <label>Năm:</label>
+    <input type="number" name="year" min="2000" max="2100" required />
+    <button type="submit">Thống kê</button>
+</form>
+
+<!-- Hiển thị lỗi nếu có -->
+@if (ViewBag.Error != null)
+{
+    <p style="color: red;">@ViewBag.Error</p>
+}
+
+<!-- Hiển thị kết quả thống kê -->
+@if (Model != null && Model.Any())
+{
+    <h3>Kết quả thống kê</h3>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>Năm</th>
+            <th>Số đơn hàng</th>
+            <th>Tổng tiền</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>Năm @item.Key</td>
+                <td>@item.Value.Count</td>
+                <td>@item.Value.TotalAmount.ToString("N0") ₫</td>
+            </tr>
+        }
+    </table>
+    <canvas id="yearChart"></canvas>
+
+    <div class="d-flex justify-content-between mb-3">
+        <button onclick="printReport()" class="btn btn-primary">
+            🖨 In báo cáo
+        </button>
+        <a href="@Url.Action("ExportStatisticsToJson", "Order", new { area = "Admin", period = "day" })" class="btn btn-success">
+            📂 Xuất JSON
+        </a>
+        <a href="@Url.Action("ExportStatisticsToPdf", "Order", new { area = "Admin", period = ViewContext.HttpContext.Request.Query["period"] })" class="btn btn-danger">
+            📄 Xuất PDF
+        </a>
+    </div>
+}
+else if (Model != null)
+{
+    <p>Không có dữ liệu trong năm này.</p>
+}
+
+<script>
+    var modelData = @Json.Serialize(Model);
+    console.log("Model Data:", modelData);  // In ra cấu trúc dữ liệu của Model
+
+    if (modelData && Object.keys(modelData).length > 0) {
+        // Lọc bỏ các khóa không hợp lệ (như $id)
+        var filteredModelData = Object.keys(modelData)
+            .filter(key => key !== "$id")  // Lọc bỏ khóa $id
+            .reduce((obj, key) => {
+                obj[key] = modelData[key];
+                return obj;
+            }, {});
+
+        // Kiểm tra lại dữ liệu sau khi lọc
+        console.log("Filtered Model Data:", filteredModelData);
+
+        // Lấy danh sách năm từ dữ liệu Model đã lọc
+        var labels = Object.keys(filteredModelData).map(key => `Năm ${key}`);  // Tạo labels đúng định dạng
+
+        // Chuyển TotalAmount thành số, nếu không phải số thì dùng 0
+        var data = Object.values(filteredModelData).map(v => {
+            console.log("Checking data for year:", v);  // Log toàn bộ đối tượng cho từng năm
+
+            // Nếu data có TotalAmount, tính toán tổng tiền
+            if (v && v.TongTien) {
+                var amount = v.TongTien;
+                if (typeof amount === 'number' && !isNaN(amount)) {
+                    return parseFloat(amount);  // Chuyển đổi thành số thực
+                } else {
+                    console.log("Invalid TotalAmount for year", v);  // In ra thông tin nếu TotalAmount không hợp lệ
+                    return 0;  // Nếu TotalAmount không hợp lệ, trả về 0
+                }
+            } else {
+                return 0; // Nếu không có TotalAmount, trả về 0
+            }
+        });
+
+        console.log("Labels:", labels);  // Kiểm tra giá trị labels
+        console.log("Data:", data);  // Kiểm tra giá trị data
+
+        // Tạo biểu đồ nếu có dữ liệu hợp lệ
+        if (data.length > 0 && data.some(val => val !== 0)) {  // Kiểm tra xem có ít nhất một giá trị khác 0
+            var ctx = document.getElementById('yearChart').getContext('2d');
+            var yearChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,  // Sử dụng labels đã được sửa
+                    datasets: [{
+                        label: 'Tổng tiền (₫)',
+                        data: data,  // Dữ liệu đã được kiểm tra
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return value.toLocaleString('vi-VN') + ' ₫';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        } else {
+            console.log("Không có dữ liệu hợp lệ để hiển thị.");
+        }
+    } else {
+        console.log("Không có dữ liệu thống kê.");
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+

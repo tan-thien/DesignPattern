@@ -1,0 +1,57 @@
+﻿@model ClothingStore.Models.Order
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+}
+
+<h2>Chi tiết đơn hàng - Mã: @Model.IdOrder</h2>
+
+<table class="table">
+    <tr>
+        <th>Khách hàng:</th>
+        <td>@Model.Customer.CusName</td>
+    </tr>
+    <tr>
+        <th>Ngày đặt:</th>
+        <td>@Model.NgayDat.ToString("dd/MM/yyyy")</td>
+    </tr>
+    <tr>
+        <th>Trạng thái:</th>
+        <td>@Model.StatusOrder</td>
+    </tr>
+</table>
+
+<h3>Danh sách sản phẩm</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Tên sản phẩm</th>
+            <th>Số lượng</th>
+            <th>Giá</th>
+            <th>Thành tiền</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderDetails)
+        {
+            <tr>
+                <td>@item.Product.ProductName</td>
+                <td>@item.SoLuong</td>
+                <td>@item.Product.Price.ToString("C")</td>
+                <td>@(item.SoLuong * item.Product.Price)</td>
+            </tr>
+        }
+    </tbody>
+    <form asp-action="UpdateStatus" method="post">
+        <input type="hidden" name="id" value="@Model.IdOrder" />
+        <label>Trạng thái:</label>
+        <select name="status" class="form-control">
+            <option value="Chờ xác nhận">Chờ xác nhận</option>
+            <option value="Đang giao">Đang giao</option>
+            <option value="Đã giao">Đã giao</option>
+            <option value="Đã hủy">Đã hủy</option>
+        </select>
+        <button type="submit" class="btn btn-primary mt-2">Cập nhật</button>
+    </form>
+</table>
+<a asp-action="Index" class="btn btn-secondary">Quay lại</a>

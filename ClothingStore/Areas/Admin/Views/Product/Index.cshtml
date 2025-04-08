@@ -1,0 +1,43 @@
+﻿@model IEnumerable<ClothingStore.Models.Product>
+
+<h2>Danh sách sản phẩm</h2>
+
+<a asp-action="Create" class="btn btn-primary mb-3">Thêm sản phẩm</a>
+
+<table class="table table-bordered mt-3">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên sản phẩm</th>
+            <th>Hình ảnh</th>
+            <th>Mô tả</th>
+            <th>Số lượng</th>
+            <th>Giá</th>
+            <th>Kích cỡ</th>
+            <th>Danh mục</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.IdProduct</td>
+                <td>@product.ProductName</td>
+                <td>
+                    <img src="@product.Image" alt="@product.ProductName" class="img-thumbnail" style="width: 100px; height: auto;" />
+                </td>
+
+                <td>@product.Description</td>
+                <td>@product.Quantity</td>
+                <td>@product.Price VNĐ</td>
+                <td>@product.Size</td>
+                <td>@(product.Category != null ? product.Category.CateName : "Không có danh mục")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@product.IdProduct" class="btn btn-warning">Sửa</a>
+                    <a asp-action="Delete" asp-route-id="@product.IdProduct" class="btn btn-danger">Xoá</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

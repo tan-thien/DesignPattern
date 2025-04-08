@@ -1,0 +1,42 @@
+﻿@model IEnumerable<ClothingStore.Models.Category>
+
+@{
+    ViewData["Title"] = "Category List";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Category List</h2>
+
+<p>
+    <a asp-area="Admin" asp-controller="Category" asp-action="Create" class="btn btn-primary">Add New Category</a>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>IdCate</th>
+            <th>Category Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var category in Model)
+        {
+            <tr>
+                <td>@category.IdCate</td>
+                <td>@category.CateName</td>
+                <td>
+                    <a href="@Url.Action("Edit", "Category", new { area = "Admin", id = category.IdCate })"
+                       class="btn btn-warning btn-sm">
+                        Edit
+                    </a>
+                    <form action="@Url.Action("Delete", "Category", new { area = "Admin", id = category.IdCate })"
+                          method="post"
+                          style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

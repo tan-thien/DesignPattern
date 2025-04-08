@@ -1,0 +1,100 @@
+﻿@model Dictionary<string, (int Count, decimal TotalAmount)>
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Thống kê theo ngày";
+    var labelsJson = JsonSerializer.Serialize(Model.Select(x => x.Key).ToList());
+    var dataJson = JsonSerializer.Serialize(Model.Select(x => x.Value.TotalAmount).ToList());
+}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<h2>Thống kê theo ngày</h2>
+
+<form method="post" asp-action="GetStatisticsByDay">
+    <label>Từ ngày:</label>
+    <input type="date" name="startDate" required />
+    <label>Đến ngày:</label>
+    <input type="date" name="endDate" required />
+    <button type="submit">Thống kê</button>
+</form>
+
+@if (Model != null && Model.Any())
+{
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>Ngày</th>
+            <th>Số đơn hàng</th>
+            <th>Tổng tiền</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Key</td>
+                <td>@item.Value.Count</td>
+                <td>@item.Value.TotalAmount.ToString("N0") ₫</td>
+            </tr>
+        }
+    </table>
+
+    <canvas id="dayChart"></canvas>
+
+    <div class="d-flex justify-content-between mb-3">
+        <button onclick="printReport()" class="btn btn-primary">
+            🖨 In báo cáo
+        </button>
+        <a href="@Url.Action("ExportStatisticsToJson", "Order", new { area = "Admin", period = "day" })" class="btn btn-success">
+            📂 Xuất JSON
+        </a>
+        <a href="@Url.Action("ExportStatisticsToPdf", "Order", new { area = "Admin", period = ViewContext.HttpContext.Request.Query["period"] })" class="btn btn-danger">
+            📄 Xuất PDF
+        </a>
+    </div>
+}
+else
+{
+    <p>Không có dữ liệu để hiển thị.</p>
+}
+
+<script>
+    // Chuyển Model thành danh sách mảng
+    var labels = JSON.parse('@Html.Raw(labelsJson)');
+    var data = JSON.parse('@Html.Raw(dataJson)');
+
+
+    // Kiểm tra dữ liệu trong console
+    console.log('Labels:', labels);
+    console.log('Data:', data);
+
+    // Kiểm tra dữ liệu có hợp lệ không
+    if (Array.isArray(labels) && labels.every(item => typeof item === 'string') &&
+        Array.isArray(data) && data.every(item => typeof item === 'number')) {
+
+        var ctx = document.getElementById('dayChart').getContext('2d');
+        var dayChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Tổng tiền (₫)',
+                    data: data,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function (value) {
+                                return value.toLocaleString(); // Hiển thị số có dấu phân cách
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } else {
+        console.error('Dữ liệu không hợp lệ:', labels, data);
+    }
+</script>

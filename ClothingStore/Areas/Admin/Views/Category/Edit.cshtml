@@ -1,0 +1,29 @@
+﻿@model ClothingStore.Models.Category
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Edit Category</h2>
+
+
+<form asp-action="Edit" method="post">
+    <!-- Hiển thị IdCate (ẩn đi nhưng vẫn gửi về controller khi submit) -->
+    <input type="hidden" asp-for="IdCate" />
+
+    <div class="form-group">
+        <label asp-for="IdCate">Category ID</label>
+        <input asp-for="IdCate" class="form-control" disabled /> <!-- Chỉ hiển thị, không cho chỉnh sửa -->
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CateName">Category Name</label>
+        <input asp-for="CateName" class="form-control" />
+        <span asp-validation-for="CateName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-3">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-area="Admin" asp-controller="Category" asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>

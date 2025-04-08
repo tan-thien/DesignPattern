@@ -1,0 +1,60 @@
+﻿@model IEnumerable<ClothingStore.Models.Product>
+
+@{
+    ViewData["Title"] = "Danh sách sản phẩm";
+}
+
+<h2>Danh sách sản phẩm</h2>
+
+<div class="product-list">
+    @foreach (var product in Model)
+    {
+        <div class="product-card">
+            <a asp-area="Cus" asp-controller="Product" asp-action="Details" asp-route-id="@product.IdProduct">
+                <img src="@product.Image" alt="@product.ProductName" class="product-image" />
+                <h3>@product.ProductName</h3>
+                <p class="price">@product.Price VNĐ</p>
+            </a>
+        </div>
+    }
+</div>
+
+<style>
+    .product-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 0));
+        gap: 20px;
+    }
+
+    .product-card {
+        width: 250px;
+        height: 380px;
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.2s;
+    }
+
+        .product-card:hover {
+            transform: scale(1.05);
+        }
+
+        .product-card a {
+            text-decoration: none;
+            color: black;
+        }
+
+    .product-image {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .price {
+        font-weight: bold;
+        color: #e44d26;
+    }
+</style>

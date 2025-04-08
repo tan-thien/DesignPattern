@@ -1,0 +1,54 @@
+﻿@model ClothingStore.Models.Product
+
+@{
+    ViewData["Title"] = "Create Product";
+}
+
+<h2>Create New Product</h2>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <div>
+        <label for="ProductName">Tên sản phẩm</label>
+        <input type="text" id="ProductName" name="ProductName" class="form-control" required />
+    </div>
+    <div>
+        <label for="IdCate">Danh mục</label>
+        <select id="IdCate" name="IdCate" class="form-control" required>
+            @foreach (var category in ViewBag.Categories)
+            {
+                <option value="@category.IdCate">@category.CateName</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label for="Quantity">Số lượng</label>
+        <input type="number" id="Quantity" name="Quantity" class="form-control" required />
+    </div>
+    <div>
+        <label for="Price">Giá</label>
+        <input type="number" id="Price" name="Price" class="form-control" required />
+    </div>
+    <div>
+        <label for="Description">Mô tả</label>
+        <textarea id="Description" name="Description" class="form-control" required></textarea>
+    </div>
+    <div>
+        <label for="Size">Kích cỡ</label>
+        <select id="Size" name="Size" class="form-control" required>
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+        </select>
+    </div>
+    <div>
+        <label for="ImageFile">Hình ảnh</label>
+        <input type="file" id="ImageFile" name="ImageFile" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Thêm sản phẩm</button>
+</form>
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

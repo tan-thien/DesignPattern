@@ -1,0 +1,31 @@
+﻿@model List<ClothingStore.Models.Voucher>
+
+@{
+    ViewData["Title"] = "Quản lý Voucher";
+}
+
+<h2>Danh sách Voucher</h2>
+
+<a class="btn btn-primary mb-3" href="@Url.Action("Create", "Voucher", new { area = "Admin" })">Tạo Voucher Mới</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Mã Voucher</th>
+            <th>Giảm Giá (%)</th>
+            <th>Ngày Bắt Đầu</th>
+            <th>Ngày Kết Thúc</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var voucher in Model)
+        {
+            <tr>
+                <td>@voucher.Code</td>
+                <td>@(voucher.Discount * 100)%</td>
+                <td>@voucher.Start.ToString("dd/MM/yyyy")</td>
+                <td>@voucher.End.ToString("dd/MM/yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>
